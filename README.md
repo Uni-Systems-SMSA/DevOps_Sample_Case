@@ -6,6 +6,7 @@
     more details
 #Create three (3) Branches (Default: Main, Front-end & Back-End) for specific Project
    - Specify Rules for Main Branch
+   -  Branch protection rule
 # Create Issues (Agile) within Project (React_Demo)
     - assign to the member
   # Specify CI/CD Pipeline 
