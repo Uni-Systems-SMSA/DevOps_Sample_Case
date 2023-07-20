@@ -90,7 +90,133 @@ To make a change in th Project everyone has to follow these steps :
 The next step in the pipeline is testing and this primarly involves the developers. When the code changes we have to amke sure it works like it is supposed to before we continue to package and deploy it. For that reason every developer should create tests (unit, performance, etc) while writing the code and when it is finished the tests are run automatically with GitHub Actions and if something fails it can't be merged to main. It is very important to create tests that cover every aspect of the software to find as many bugs as we can.
 
 ### Package 
-TBA
 
-### Deploy
-TBA
+
+
+
+
+## GitHub Actions 
+To implement the above pipeline we use GitHub Actions. We use three actions:
+1. For the main branch to Build, Test, Package and Deploy
+```YAML
+name: Deploy Main Branch
+on:
+  push: 
+    branches: main
+jobs:
+ build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20         
+      - name: Install Dependencies
+        run: npm ci
+      - name: Build Application
+        run: npm run build
+ test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+      - name: Install Dependencies
+        run: npm ci
+      - name: Run Tests
+        run: npm test
+ package:
+   name: Package
+   runs-on: ubuntu-latest
+   needs: [build,test]
+   steps:
+     - name: Checkout Repository
+       uses: actions/checkout@v2
+     - name: Build Server image
+       run: docker build -t <USERNAME>/<IMAGE_NAME> .
+     - name: Docker Image Artifact Upload
+       uses: ishworkh/docker-image-artifact-upload@v2.1.0
+       with:
+         image: "<USERNAME>/<IMAGE_NAME>"
+```
+3. For all the other branches to build and test the changes :
+```YAML
+name: Build and Test 
+on:
+  push:
+    branches-ignore:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+      - name: Install packages and build 
+        run: |
+          npm ci
+          npm run build --if-present
+      - name: Test the build
+        run: npm test
+```
+5. For issues to be implement automatically to projects :
+```YAML
+name: Add bugs to bugs project
+on:
+  issues:
+    types:
+      - opened
+jobs:
+  add-to-project:
+    name: Add issue to project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@v0.5.0
+        with:
+          # You can target a project in a different organization
+          # to the issue
+          project-url: <GITHUB_PROJECT_URL>
+          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
