@@ -1,8 +1,11 @@
 import Keycloak from "keycloak-js";
 
+const hostname = window.location.hostname;
+console.log(window.location);
+
 const keycloak = new Keycloak(
     {
-        url: 'http://172.30.1.224:8080/' ,
+        url: `http://${hostname}:8080/` ,
         realm: 'myrealm' ,
         clientId: 'myclient' ,
     }
