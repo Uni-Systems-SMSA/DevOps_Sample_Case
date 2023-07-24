@@ -2,7 +2,6 @@ version: '3.3'
 
 services:
   # React Application
-
   react-app:
     depends_on:
       - keycloak
@@ -10,8 +9,6 @@ services:
     container_name: reacthello
     ports:
       - "3001:3000"
-
-
   # Keycloak
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.0
