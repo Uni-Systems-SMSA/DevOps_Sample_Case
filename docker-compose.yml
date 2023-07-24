@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  # React Application
+
+  react-app:
+    depends_on:
+      - keycloak
+    image: 222757818682.dkr.ecr.eu-north-1.amazonaws.com/devops-sample:latest
+    container_name: reacthello
+    working_dir: /app
+    ports:
+      - "3001:3000"
+
+
+  # Keycloak
+  keycloak:
+    image: jboss/keycloak:latest
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    ports:
+      - "8080:8080"
