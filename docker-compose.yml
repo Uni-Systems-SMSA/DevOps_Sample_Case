@@ -7,8 +7,6 @@ services:
     depends_on:
       - keycloak
     image: 222757818682.dkr.ecr.eu-north-1.amazonaws.com/devops-sample:latest
-    pull_policy: always
-
     container_name: reacthello
     working_dir: /app
     ports:
