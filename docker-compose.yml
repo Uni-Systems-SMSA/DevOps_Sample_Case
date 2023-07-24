@@ -17,9 +17,10 @@ services:
     image: quay.io/keycloak/keycloak:22.0.0
     container_name: keycloak
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
     ports:
       - "8080:8080"
-    command:
-      - start
+    command: -v start-dev --import-realm
+    volumes:
+      - ./keycloak/imports:/opt/keycloak/data/import
