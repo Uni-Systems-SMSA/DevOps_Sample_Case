@@ -8,7 +8,6 @@ services:
       - keycloak
     image: 222757818682.dkr.ecr.eu-north-1.amazonaws.com/devops-sample:latest
     container_name: reacthello
-    working_dir: /app
     ports:
       - "3001:3000"
 
@@ -22,3 +21,5 @@ services:
       - KEYCLOAK_PASSWORD=admin
     ports:
       - "8080:8080"
+    command:
+      - start-dev
