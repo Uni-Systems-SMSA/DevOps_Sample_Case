@@ -36,7 +36,7 @@ To create an Organization you can Sign In on your GitHub account and then going 
 - Security Manager (Beta)
 - Outside Collaborator
 - GitHub App Manager
-
+## Sample Case : Intership Team 
 You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
 
 ### Teams 
