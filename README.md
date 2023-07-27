@@ -36,8 +36,7 @@ To create an Organization you can Sign In on your GitHub account and then going 
 - Security Manager (Beta)
 - Outside Collaborator
 - GitHub App Manager
-## Sample Case : Intership Team 
-You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
+
 
 ### Teams 
 After an Organization is created you can invite people ot your organization by going to your Organization Home Page -> People -> Invite member and searching by their GitHub username. Once you choose one you can send the invitation and an email will be sent to them. 
@@ -90,8 +89,13 @@ To make a change in th Project everyone has to follow these steps :
 The next step in the pipeline is testing and this primarly involves the developers. When the code changes we have to amke sure it works like it is supposed to before we continue to package and deploy it. For that reason every developer should create tests (unit, performance, etc) while writing the code and when it is finished the tests are run automatically with GitHub Actions and if something fails it can't be merged to main. It is very important to create tests that cover every aspect of the software to find as many bugs as we can.
 
 ### Package 
+The packaging step is reffered to making our source code an executable (compile,containerize,...).This step is automatically triggered when a change is push to the main branch. The packaging is done in AWS using the CodeBuild service which takes a whole repository and executes predetermined commands in the BuildSpec file. Oce the containerization is complete the Docker Image of our code is uploaded in a private docker image registry in AWS Elastic Container Registry. Also the imgae is tagged with the commit hash from github so that we can always have unique tags for each version of our images.
 
+### Deployment
+The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining the server and 
 
+## Sample Case : Intership Team 
+You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
 
 
 
