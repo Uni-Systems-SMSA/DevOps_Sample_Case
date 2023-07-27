@@ -92,9 +92,10 @@ The next step in the pipeline is testing and this primarly involves the develope
 The packaging step is reffered to making our source code an executable (compile,containerize,...).This step is automatically triggered when a change is push to the main branch. The packaging is done in AWS using the CodeBuild service which takes a whole repository and executes predetermined commands in the BuildSpec file. Oce the containerization is complete the Docker Image of our code is uploaded in a private docker image registry in AWS Elastic Container Registry. Also the imgae is tagged with the commit hash from github so that we can always have unique tags for each version of our images.
 
 ### Deployment
-The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining the server and 
+The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining and updating the server which can result in unexpected costs. Deploying an application is easy when packaging is done correctly. For example if we have a docker image the only thing we need is to install the Docker Engine in our server and then create a new container from our image. Similarly if we have an executable file we just have to run it.
 
-## Sample Case : Intership Team 
+# Sample Case : Intership Team 
+
 You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
 
 
