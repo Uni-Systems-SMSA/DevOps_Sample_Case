@@ -95,6 +95,16 @@ The packaging step is reffered to making our source code an executable (compile,
 The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining the server and 
 
 ## Sample Case : Intership Team 
+This repository is a sample case for all af the above. Thes steps we took are as follow:
+1. We have an Organisation called Uni-Systems-SMSA, the owner is @aliferisi
+2. We created a team called internship
+3. We invited 4 new members to the organisation to work on the repository
+4. We added those four members and the organisation owner to our internship team   
+5. We created this repository called DevOps_Sample_Case and we assigned the internship team to it with write permission while the owner had admin permissions 
+6. We created a branch protection rule for our main branch so that anyone who wants to push something to the main branch can only do so with a pull request
+7. We then created a GitHub project called Internship_Deliverable to assigne tasks to each member in the form of GitHub issues
+8. Then we started working on our tasks and everything was placed to the main branch when we finished
+   
 You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
 
 
