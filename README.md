@@ -95,23 +95,24 @@ The packaging step is reffered to making our source code an executable (compile,
 The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining the server and 
 
 ## Sample Case : Intership Team 
-This repository is a sample case for all af the above. Thes steps we took are as follow:
+This repository is a sample case for all af the above. The steps we took are as follow:
+
 1. We have an Organisation called Uni-Systems-SMSA, the owner is @aliferisi
 2. We created a team called internship
 3. We invited 4 new members to the organisation to work on the repository
 4. We added those four members and the organisation owner to our internship team   
 5. We created this repository called DevOps_Sample_Case and we assigned the internship team to it with write permission while the owner had admin permissions 
 6. We created a branch protection rule for our main branch so that anyone who wants to push something to the main branch can only do so with a pull request
-7. We then created a GitHub project called Internship_Deliverable to assigne tasks to each member in the form of GitHub issues
+7. We then created a GitHub project called Internship_Deliverable to assign tasks to each member in the form of GitHub issues
 8. Then we started working on our tasks and everything was placed to the main branch when we finished
+9. We then created an AWS Free Tier account which gives us access to almost all the AWS services for free
+10. We used the ECR Service of AWS to create a new private registry to store our Docker Images when we build them 
+12. We use the CodeBuild Service of AWS to create a build project which takes the code that is located in our main branch in GitHub and using the given instruction it creates a Docker Image from the Dockerfile and then pushes it to our private registry
+13. The final step is to deploy our project to a on-premises VM which is done manually using a script every time we want to update our version  
    
-You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
-
-
-
-## GitHub Actions 
-To implement the above pipeline we use GitHub Actions. We use three actions:
-1. For the main branch to Build, Test, Package and Deploy
+## Pipeline code 
+To implement the above pipeline we use the following code. We use three actions:
+1. For the main branch to Build and Test :
 ```YAML
 name: Deploy Main Branch
 on:
@@ -160,7 +161,7 @@ jobs:
        with:
          image: "<USERNAME>/<IMAGE_NAME>"
 ```
-3. For all the other branches to build and test the changes :
+2. For all the other branches to build and test the changes :
 ```YAML
 name: Build and Test 
 on:
@@ -183,26 +184,52 @@ jobs:
       - name: Test the build
         run: npm test
 ```
-5. For issues to be implement automatically to projects :
-```YAML
-name: Add bugs to bugs project
+3. The Buildspec we used for the CodeBuild project :
+ ```YAML
+name: Build and Test 
 on:
-  issues:
-    types:
-      - opened
+  push:
+    branches-ignore:
+      - main
 jobs:
-  add-to-project:
-    name: Add issue to project
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@v0.5.0
+      - uses: actions/checkout@v2
+      - name: Setup node
+        uses: actions/setup-node@v2
         with:
-          # You can target a project in a different organization
-          # to the issue
-          project-url: <GITHUB_PROJECT_URL>
-          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+          node-version: 20.x
+      - name: Install packages and build 
+        run: |
+          npm ci
+          npm run build --if-present
+      - name: Test the build
+        run: npm test
 ```
+The script for deploying our new versions every time we want :
+```shell
+#!/bin/bash
+echo "pulling repo"
+git clone https://github.com/Uni-Systems-SMSA/DevOps_Sample_Case.git
 
+echo "got repo"
+
+cd DevOps_Sample_Case
+git checkout Front-end-features
+git pull
+echo "configuring aws"
+aws configure set aws_access_key_id "$AWS_ACCESS_KEY"
+aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+echo "done configuring"
+echo "login docker"
+aws ecr get-login-password | docker login --username AWS --password-stdin 222757818682.dkr.ecr.eu-north-1.amazonaws.com
+echo "pulling images"
+docker-compose pull
+echo "docker composing"
+docker-compose up -d
+echo "done"
+```
 
 
 
