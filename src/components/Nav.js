@@ -56,7 +56,7 @@ const hasRealmAdminRole =
                 
                  {keycloak.authenticated && (
                    <button type="button" onClick={handleLogout}>
-                     Logout ({keycloak.tokenParsed?.preferred_username})
+                     <a href="/">Logout ({keycloak.tokenParsed?.preferred_username})</a>
                    </button>
                    
                  )}
