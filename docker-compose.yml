@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  # React Application
+  react-app:
+    depends_on:
+      - keycloak
+    image: localhost:5050/devops-sample:latest
+    container_name: devops-sample
+    ports:
+      - "3001:3001"
+  # Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.0
+    container_name: keycloak
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8080:8080"
+    command: -v start-dev --import-realm
+    volumes:
+      - ./keycloak/imports:/opt/keycloak/data/import
