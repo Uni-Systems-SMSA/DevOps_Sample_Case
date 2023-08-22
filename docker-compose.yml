@@ -5,10 +5,10 @@ services:
   react-app:
     depends_on:
       - keycloak
-    image: 222757818682.dkr.ecr.eu-north-1.amazonaws.com/devops-sample:latest
-    container_name: reacthello
+    image: localhost:5050/devops-sample:latest
+    container_name: devops-sample
     ports:
-      - "3001:3000"
+      - "3001:3001"
   # Keycloak
   keycloak:
     image: quay.io/keycloak/keycloak:22.0.0
