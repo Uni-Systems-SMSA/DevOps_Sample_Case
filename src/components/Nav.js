@@ -1,5 +1,6 @@
 import React from "react";
 import { useKeycloak } from "@react-keycloak/web";
+import styles from '../styles.module.css'
 
 const Nav = () => {
  const { keycloak } = useKeycloak();
@@ -26,20 +27,20 @@ const hasRealmAdminRole =
                Keycloak React AUTH.
              </h1>
              
-               <button>
+               <button className={styles.myButton}>
                  <a href="/">
                    Home
                  </a>
                 </button>
                {keycloak.authenticated && (
-               <button>
+               <button className={styles.myButton}>
                  <a href="/secured">
                    Secured Page
                  </a>
                  </button>
                )}
                {keycloak.authenticated && hasRealmAdminRole && (
-                <button>
+                <button className={styles.myButton}>
                  <a href="/admin">
                    Admin Page
                  </a>
@@ -49,13 +50,13 @@ const hasRealmAdminRole =
              <div>
                <div>
                  {!keycloak.authenticated && (
-                   <button type="button" onClick={handleLogin}>
+                   <button className={styles.myLoginButton} type="button" onClick={handleLogin}>
                      Login
                    </button>
                  )}
                 
                  {keycloak.authenticated && (
-                   <button type="button" onClick={handleLogout}>
+                   <button className={styles.myButton} type="button" onClick={handleLogout}>
                      <a href="/">Logout ({keycloak.tokenParsed?.preferred_username})</a>
                    </button>
                    
