@@ -487,9 +487,9 @@
   "otpPolicyPeriod": 30,
   "otpPolicyCodeReusable": false,
   "otpSupportedApplications": [
-    "totpAppGoogleName",
+    "totpAppMicrosoftAuthenticatorName",
     "totpAppFreeOTPName",
-    "totpAppMicrosoftAuthenticatorName"
+    "totpAppGoogleName"
   ],
   "webAuthnPolicyRpEntityName": "keycloak",
   "webAuthnPolicySignatureAlgorithms": [
@@ -732,14 +732,17 @@
       "name": "",
       "description": "",
       "rootUrl": "http://localhost:3000/",
-      "adminUrl": "http://localhost:3000/",
+      "adminUrl": "http://172.30.1.224:3000/",
       "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:3000/*"
+        "http://localhost:3000/*",
+        "http://172.30.1.224:3000/*",
+        "http://172.30.1.224:3001/*",
+        "http://localhost:3001/*"
       ],
       "webOrigins": [
         "*"
