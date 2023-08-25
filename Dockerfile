@@ -5,7 +5,7 @@ FROM node as builder
 COPY package.json package-lock.json ./
 
 # Install the dependencies and make the folder
-RUN npm install
+RUN npm install --force
 
 COPY . .
 
