@@ -11,7 +11,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm config set legacy-peer-deps true
-RUN npm ci
+RUN npm install --silent
 RUN npm install react-scripts@3.4.1 -g --silent
 RUN npm install serve --silent
 
