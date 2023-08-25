@@ -1,31 +1,21 @@
-# stage1 as builder
-FROM node as builder
+FROM node
 
-# copy the package.json to install dependencies
-COPY package.json package-lock.json ./
 
-# Install the dependencies and make the folder
+# set working directory
+WORKDIR /app
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
+COPY package.json ./
+COPY package-lock.json ./
 RUN npm install --force
+RUN npm install react-scripts@3.4.1 -g --silent
+RUN npm install serve --silent
 
-COPY . .
-
-# Build the project and copy the files
+# add app
+COPY . ./
 RUN npm run build
-
-
-FROM nginx
-
-#!/bin/sh
-RUN mkdir /var/www/
-COPY --from=builder ./build/* /var/www/build/
-COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
-
-## Remove default nginx index page
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy from the stahg 1
-COPY --from=builder ./build /usr/share/nginx/html
-
-
-
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# start app
+CMD ["serve", "-s", "-l", "3001", "build"]
