@@ -40,7 +40,7 @@ function AdminNavbar(props) {
 
   const handleLogout = () => {
     keycloak.logout();
-    window.location.href = `http://${window.location.hostname}:3000/admin/dashboard`;
+    //window.location.href = `http://${window.location.hostname}:3000/admin/dashboard`;
   };
 
   React.useEffect(() => {
