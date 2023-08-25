@@ -86,19 +86,19 @@ function FixedPlugin(props) {
           </li>
           <li className="button-container">
             <Button
-              href="https://www.creative-tim.com/product/black-dashboard-react"
+              href="https://github.com/Uni-Systems-SMSA/DevOps_Sample_Case/tree/Front-end-features"
               color="primary"
               block
               className="btn-round"
             >
-              Download Now
+              Documentation
             </Button>
-            <Button
+            {/*<Button
               color="default"
               block
               className="btn-round"
               outline
-              href="https://demos.creative-tim.com/black-dashboard-react/#/documentation/tutorial"
+              href="https://github.com/Uni-Systems-SMSA/DevOps_Sample_Case/tree/Front-end-features"
             >
               Documentation
             </Button>
@@ -113,7 +113,7 @@ function FixedPlugin(props) {
               color="danger"
             >
               Get pro version
-            </Button>
+            </Button>*/}
           </li>
         </ul>
       </Dropdown>
