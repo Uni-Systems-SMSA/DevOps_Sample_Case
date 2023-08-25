@@ -1,22 +1,32 @@
-FROM node
+# stage1 as builder
+FROM node:10-alpine as builder
 
+# copy the package.json to install dependencies
+COPY package.json package-lock.json ./
 
-# set working directory
-WORKDIR /app
+# Install the dependencies and make the folder
+RUN npm install && mkdir /react-ui && mv ./node_modules ./react-ui
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+WORKDIR /react-ui
 
-# install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm config set legacy-peer-deps true
-RUN npm install --silent
-RUN npm install react-scripts@3.4.1 -g --silent
-RUN npm install serve --silent
+COPY . .
 
-# add app
-COPY . ./
+# Build the project and copy the files
 RUN npm run build
-# start app
-CMD ["serve", "-s", "-l", "3001", "build"]
+
+
+FROM nginx:alpine
+
+#!/bin/sh
+
+COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
+
+## Remove default nginx index page
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy from the stahg 1
+COPY --from=builder /react-ui/build /usr/share/nginx/html
+
+EXPOSE 3000 80
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
