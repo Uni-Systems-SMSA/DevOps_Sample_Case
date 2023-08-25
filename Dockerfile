@@ -17,7 +17,7 @@ FROM nginx
 
 #!/bin/sh
 RUN mkdir /var/www/
-RUN scp -r ./build/* /var/www/build/
+RUN cp -r ./build/* /var/www/build/
 COPY ./.nginx/nginx.conf /etc/nginx/nginx.conf
 
 ## Remove default nginx index page
