@@ -6,7 +6,7 @@ console.log(window.location);
 const keycloak = new Keycloak(
     {
         url: `http://${hostname}:8080/` ,
-        realm: 'myserverrealm' ,
+        realm: 'myrealm' ,
         clientId: 'myclient' ,
     }
 );

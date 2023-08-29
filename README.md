@@ -89,19 +89,55 @@ To make a change in th Project everyone has to follow these steps :
 The next step in the pipeline is testing and this primarly involves the developers. When the code changes we have to amke sure it works like it is supposed to before we continue to package and deploy it. For that reason every developer should create tests (unit, performance, etc) while writing the code and when it is finished the tests are run automatically with GitHub Actions and if something fails it can't be merged to main. It is very important to create tests that cover every aspect of the software to find as many bugs as we can.
 
 ### Package 
-The packaging step is reffered to making our source code an executable (compile,containerize,...).This step is automatically triggered when a change is push to the main branch. The packaging is done in AWS using the CodeBuild service which takes a whole repository and executes predetermined commands in the BuildSpec file. Oce the containerization is complete the Docker Image of our code is uploaded in a private docker image registry in AWS Elastic Container Registry. Also the imgae is tagged with the commit hash from github so that we can always have unique tags for each version of our images.
+The packaging step is reffered to making our source code an executable (compile,containerize,...).This step is automatically triggered when a change is push to the main branch. The packaging can be done in multiple ways which are briefly explained below:
+1. Docker Hub
+    - easy to set up all you need is a docker hub account which is also a prerequisite for Docker Engine 
+    - To actually build an image on Docker Hub you need a Docker Hub Pro account wich costs 5$ per month (more information [here](https://hub.docker.com/billing/plan/update)
+    - You can easily store images on Docker Hub and with the free account you have unlimited public repositories to store Docker Images and one private repository
+    - All public repositories are accessible by everyone and anyone can pull images but only the owner of the repository can push new docker images to the repository
+2. GitHub
+    - Free 2000 minutes per month for free (but this includes the building and testing steps of the pipeline)
+    - Easy to set up the pipeline with the usual commands
+    - Images can be stored as artifacts (500 MB max) but is not practical since the can not be accessed easily from anywhere
+    - Overall not a practical way since everytime we have to rebuild every image and usually images are larger than 500 MB
+3. AWS (and other Cloud Services)
+    - Easy to set up and AWS Free Tier account gives us acces to 100 minutes per month for build Docker Images
+    - The process is done with the CodeBuild service from AWS
+    - We can make as many CodeBuild Projects as we want and they can run at the same time
+    - After the Docker image is built AWS has the ECR service where we can store our images in private or public repositories
+    - Overall the best choice to have everything in one place especially if our application is hosted on the cloud
+4. On-premises
+    - Full control af the process
+    - Some things have to be done mannually
+    - All you need is Docker Engine installed
+    - Also you can host a private (or public) registry to save all you Docker Images with very easy setup (instructions [here](https://docs.docker.com/registry/deploying/)
 
 ### Deployment
-The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining the server and 
+The deployment step is the final step of the pipeline and there are numerous ways to implement. The easiest way is to deploy our application in AWS using a serverless architecture which means that our organizations doesn't need to maintain a server on-premises or worry about scaling. The most popular way of deployment is on a server on-premises which gives us total control of our architecture but also total responsibility of maintaining and updating the server which can result in unexpected costs. Deploying an application is easy when packaging is done correctly. For example if we have a docker image the only thing we need is to install the Docker Engine in our server and then create a new container from our image. Similarly if we have an executable file we just have to run it.
+
+#### Kubernetes
+TO implement our application using a microservices application is a very popular option nowadays and comes with many benefits. When we use a microservices architecture everu component is independent from the others and changes can be made to one without affecting the others. When we use a microservices architecture is very common to use Docker for our deployment where each component is represented by a docker image. To deploy and manage the containers that run our images most of the times Kubernetes is used which is a managing software that can be used to manage a cluster of nodes where each node runs pods (like containers) and everything seems to be a unique server when in reality there are many servers working closely with eachother. At least one node in every cluster is a Master Node which is used to manage the whole cluster and is the command center for the whole cluster. Kubernetes need at least two nodes (servers/VMs/computers) to be set up, a Master Node and a Worker node. Also there are tools like Minikube that create a virtual cluster with little hardware requirements so that developers and DevOps engineers can test their deployments before the deploy it on an actual cluster. 
 
 ## Sample Case : Intership Team 
-You can find additional information one the differences of these roles [here](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization).
+This repository is a sample case for all af the above. The steps we took are as follow:
 
-
-
-## GitHub Actions 
-To implement the above pipeline we use GitHub Actions. We use three actions:
-1. For the main branch to Build, Test, Package and Deploy
+1. We have an Organisation called Uni-Systems-SMSA, the owner is @aliferisi
+2. We created a team called internship
+3. We invited 4 new members to the organisation to work on the repository
+4. We added those four members and the organisation owner to our internship team   
+5. We created this repository called DevOps_Sample_Case and we assigned the internship team to it with write permission while the owner had admin permissions 
+6. We created a branch protection rule for our main branch so that anyone who wants to push something to the main branch can only do so with a pull request
+7. We then created a GitHub project called Internship_Deliverable to assign tasks to each member in the form of GitHub issues
+8. Then we started working on our tasks and everything was placed to the main branch when we finished
+9. We created a docker registry on our private VM to store our docker images
+10. We installed Minikube to test our deployments and the Kubernetes configuration files
+11. We used the packging scripts below to clone the repository, build a docker image from our code and push the image to our private registry
+12. And we used the deployment script to update the image we used in our frontend
+      
+   
+## Pipeline code 
+To implement the above pipeline we use the following code. We use three actions:
+1. For the main branch to Build and Test :
 ```YAML
 name: Deploy Main Branch
 on:
@@ -136,21 +172,8 @@ jobs:
         run: npm ci
       - name: Run Tests
         run: npm test
- package:
-   name: Package
-   runs-on: ubuntu-latest
-   needs: [build,test]
-   steps:
-     - name: Checkout Repository
-       uses: actions/checkout@v2
-     - name: Build Server image
-       run: docker build -t <USERNAME>/<IMAGE_NAME> .
-     - name: Docker Image Artifact Upload
-       uses: ishworkh/docker-image-artifact-upload@v2.1.0
-       with:
-         image: "<USERNAME>/<IMAGE_NAME>"
 ```
-3. For all the other branches to build and test the changes :
+2. For all the other branches to build and test the changes :
 ```YAML
 name: Build and Test 
 on:
@@ -173,28 +196,29 @@ jobs:
       - name: Test the build
         run: npm test
 ```
-5. For issues to be implement automatically to projects :
-```YAML
-name: Add bugs to bugs project
-on:
-  issues:
-    types:
-      - opened
-jobs:
-  add-to-project:
-    name: Add issue to project
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/add-to-project@v0.5.0
-        with:
-          # You can target a project in a different organization
-          # to the issue
-          project-url: <GITHUB_PROJECT_URL>
-          github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
+3. The script for packaging our new versions every time we want :
+```shell
+#!/bin/bash
+git clone https://github.com/Uni-Systems-SMSA/DevOps_Sample_Case.git
+
+cd /root/DevOps_Sample_Case
+git checkout main
+git pull
+
+docker build -t 172.30.1.224:5050/devops-sample:$1 -t 172.30.1.224:5050/devops-sample:latest .
+
+docker push 172.30.1.224:5050/devops-sample --all-tags
 ```
+4.  The script for deploying our new versions every time we want :
+```shell
+kill $(lsof -t -i:3001)
 
+kubectl set image deployments/frontend-deployment frontend=172.30.1.224:5050/devops-sample:$1
+sleep 10
 
-
+kubectl port-forward --address=0.0.0.0 services/frontend-load 3001:3001 &
+kubectl port-forward --address=0.0.0.0 services/keycloak-service 8080 &
+```
 
 
 
